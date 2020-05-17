@@ -78,7 +78,7 @@ class Summary:
         release_all.plot(kind="bar", 
                          width= 1,
                          color="blue", 
-                         alpha=0.8, 
+                         alpha=0.5, 
                          figsize=(15,5), 
                          edgecolor = "red",
                          linewidth=3, 
@@ -95,7 +95,7 @@ class Summary:
         release_sale.plot(kind="bar", 
                           width= 1,
                           color="blue", 
-                          alpha=0.8, 
+                          alpha=0.5, 
                           figsize=(15,5),
                           edgecolor = "red",
                           linewidth=3, 
@@ -112,7 +112,7 @@ class Summary:
         release_all.plot(kind="bar", 
                          width= 1,
                          color="red",
-                         alpha=0.8, 
+                         alpha=0.5, 
                          figsize=(15,5),
                          edgecolor = "blue",
                          linewidth=3, 
@@ -129,7 +129,7 @@ class Summary:
         release_sale.plot(kind="bar", 
                           width= 1,
                           color="red", 
-                          alpha=0.8, 
+                          alpha=0.5, 
                           figsize=(15,5), 
                           edgecolor = "blue",
                           linewidth=3, 
@@ -350,7 +350,7 @@ class Summary_ratings:
         return rating_table
     
     def summary_table(self):
-        fig = plt.figure(figsize = (20, 23))
+        fig = plt.figure(figsize = (20, 22))
         ax = fig.add_subplot(111)
         
         the_table = ax.table(cellText = self.ratings().values,
@@ -372,9 +372,9 @@ class Summary_ratings:
                                                                                    alpha=0.8, 
                                                                                    figsize=(20,5),
                                                                                    color="green", 
-                                                                                   edgecolor = "blue",
+                                                                                   edgecolor = "yellow",
                                                                                    linewidth=3, 
-                                                                                   label = "Prices before discount")
+                                                                                   label = "Ratio of games on sale")
         plt.title('Ratio of games on sale for different Steam ratings')
         plt.ylabel('Ratio of games on sale', size='x-large')
         plt.xlabel('Rating', size='x-large')
@@ -389,7 +389,7 @@ class Summary_ratings:
                                                                                    color="red", 
                                                                                    edgecolor = "blue",
                                                                                    linewidth=3, 
-                                                                                   label = "Prices before discount")
+                                                                                   label = "Average discount rate")
         plt.title('Average discount rates for different Steam ratings')
         plt.ylabel('Average discount rate (%)', size='x-large')
         plt.xlabel('Rating', size='x-large')
@@ -397,8 +397,24 @@ class Summary_ratings:
         
         return print(),plt.show()
     
+    def n_of_games(self):
+        sale_ratio_hist = pd.Series(self.ratings()['Games']).plot(kind="bar",
+                                                                                   alpha=0.8, 
+                                                                                   figsize=(20,5),
+                                                                                   color="yellow", 
+                                                                                   edgecolor = "red",
+                                                                                   linewidth=3, 
+                                                                                   label = "Number of games")
+        plt.title('Number of games for different Steam ratings')
+        plt.ylabel('Number of games', size='x-large')
+        plt.xlabel('Rating', size='x-large')
+        plt.gca().invert_xaxis()
+        
+        return print(),plt.show()
+    
     def runAll(self):
         self.summary_table()
+        self.n_of_games()
         self.sale_ratio_hist()
         self.average_discount_hist()
         
