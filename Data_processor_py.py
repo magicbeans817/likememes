@@ -15,12 +15,12 @@ from datetime import datetime
 # In[4]:
 
 
-#%matplotlib inline
-
 class Summary:
     
     def __init__(self, data):
         self.data = data
+
+
         
     def get_pages(self):
         pages = int(np.ceil(len(self.data)/25))
@@ -52,7 +52,7 @@ class Summary:
         
         #all_price_hist = pd.Series(all_prices).plot(kind="hist",bins=20, alpha=0.8, figsize=(10,5),color="blue", edgecolor = "red",linewidth=3, label="All prices")
         old_price_hist = pd.Series(old_price).plot(kind="hist",
-                                                   bins=20, 
+                                                   bins=400, 
                                                    alpha=0.8, 
                                                    figsize=(10,5),
                                                    color="green", 
@@ -61,7 +61,7 @@ class Summary:
                                                    linewidth=3, 
                                                    label = "Prices before discount")
         new_price_hist = pd.Series(new_price).plot(kind="hist",
-                                                   bins=20, 
+                                                   bins=400, 
                                                    alpha=0.8, 
                                                    figsize=(10,5),
                                                    color="orange", 
@@ -72,6 +72,7 @@ class Summary:
         plt.legend()
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('$$$', size='x-large')
+        plt.gca().set_xlim([0,60])
         return print(), plt.show() 
     
     def release_hist_total_year(self):
@@ -188,12 +189,27 @@ class Summary:
         #rl.axes.xaxis.set_visible(False)
         return plt.show()
     
+    def runAll(self):
+        xx.basic_summary()
+        xx.price_hist()
+        xx.release_hist_total_year()
+        xx.release_hist_sale_year()
+        xx.release_hist_total_month()
+        xx.release_hist_sale_month()
+        xx.release_multiple_hist()
+
+        
+class Summary_time:
+    
+    def __init__(self, data):
+        self.data = data
+        self.release = self.data.iloc[:,1].dropna()
+        
     def release_tab_year(self):
-        release = self.data.iloc[:,1].dropna()
-        release_all = release.groupby(release.dt.year).count()
-        release_sale = self.data.groupby(release.dt.year)['Discounted price if there is a sale (€)'].count()
-        average_discount = round(self.data.groupby(release.dt.year)['Sale rate (in %)'].mean(),2)
-        average_rating = round(self.data.groupby(release.dt.year)['Share of positive reviews (in %)'].mean(),2)
+        release_all = self.release.groupby(self.release.dt.year).count()
+        release_sale = self.data.groupby(self.release.dt.year)['Discounted price if there is a sale (€)'].count()
+        average_discount = round(self.data.groupby(self.release.dt.year)['Sale rate (in %)'].mean(),2)
+        average_rating = round(self.data.groupby(self.release.dt.year)['Share of positive reviews (in %)'].mean(),2)
         sale_ratio = round(release_sale/release_all,4)
         
         release_table_year = pd.concat([release_all,
@@ -230,11 +246,10 @@ class Summary:
         return print(), plt.show()
            
     def release_tab_month(self):
-        release = self.data.iloc[:,1].dropna()
-        release_all = release.groupby(release.dt.month).count()
-        release_sale = self.data.groupby(release.dt.month)['Discounted price if there is a sale (€)'].count()
-        average_discount = round(self.data.groupby(release.dt.month)['Sale rate (in %)'].mean(),2)
-        average_rating = round(self.data.groupby(release.dt.month)['Share of positive reviews (in %)'].mean(),2)
+        release_all = self.release.groupby(self.release.dt.month).count()
+        release_sale = self.data.groupby(self.release.dt.month)['Discounted price if there is a sale (€)'].count()
+        average_discount = round(self.data.groupby(self.release.dt.month)['Sale rate (in %)'].mean(),2)
+        average_rating = round(self.data.groupby(self.release.dt.month)['Share of positive reviews (in %)'].mean(),2)
         sale_ratio = round(release_sale/release_all,4)
         
         release_table_month = pd.concat([release_all,
@@ -284,7 +299,15 @@ class Summary:
         the_table.set_fontsize(20)
         
         return print(), plt.show()
-        
+         
+    def runAll(self):
+        xx.release_tab_year()
+        xx.release_tab_month()
+    
+class Summary_ratings:
+    
+    def __init__(self, data):
+        self.data = data
         
     
     def ratings(self):
@@ -357,6 +380,8 @@ class Summary:
         
         return print(),plt.show()
     
-    
+    def runAll(self):
+        xx.summary_table()
+        xx.sale_ratio_hist()
+        xx.average_discount_hist()
         
-
