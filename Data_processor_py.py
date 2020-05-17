@@ -15,11 +15,28 @@ from datetime import datetime
 # In[4]:
 
 
+#!/usr/bin/env python
+# coding: utf-8
+
+# Data processor:
+
+# In[3]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+
+# In[4]:
+
+
 class Summary:
     
     def __init__(self, data):
         self.data = data
-
+        self.release = self.data.iloc[:,1].dropna()
 
         
     def get_pages(self):
@@ -76,8 +93,7 @@ class Summary:
         return print(), plt.show() 
     
     def release_hist_total_year(self):
-        release = self.data.iloc[:,1].dropna()
-        release_all = release.groupby(release.dt.year).count()
+        release_all = self.release.groupby(self.release.dt.year).count()
         release_all.append
         release_all.plot(kind="bar", 
                          width= 1,
@@ -95,8 +111,7 @@ class Summary:
         return print(), plt.show()
     
     def release_hist_sale_year(self):
-        release = self.data.iloc[:,1].dropna()
-        release_sale = self.data.groupby(release.dt.year)['Discounted price if there is a sale (€)'].count()
+        release_sale = self.data.groupby(self.release.dt.year)['Discounted price if there is a sale (€)'].count()
         release_sale.plot(kind="bar", 
                           width= 1,
                           color="blue", 
@@ -113,8 +128,7 @@ class Summary:
         return print(), plt.show()
     
     def release_hist_total_month(self):
-        release = self.data.iloc[:,1].dropna()
-        release_all = release.groupby(release.dt.month).count()
+        release_all = self.release.groupby(self.release.dt.month).count()
         release_all.plot(kind="bar",
                          
                          width= 1,
@@ -132,8 +146,7 @@ class Summary:
         return print(), plt.show()
     
     def release_hist_sale_month(self):
-        release = self.data.iloc[:,1].dropna()
-        release_sale = self.data.groupby(release.dt.month)['Discounted price if there is a sale (€)'].count()
+        release_sale = self.data.groupby(self.release.dt.month)['Discounted price if there is a sale (€)'].count()
         release_sale.plot(kind="bar", 
                           width= 1,
                           color="red", 
@@ -190,13 +203,13 @@ class Summary:
         return plt.show()
     
     def runAll(self):
-        xx.basic_summary()
-        xx.price_hist()
-        xx.release_hist_total_year()
-        xx.release_hist_sale_year()
-        xx.release_hist_total_month()
-        xx.release_hist_sale_month()
-        xx.release_multiple_hist()
+        self.basic_summary()
+        self.price_hist()
+        self.release_hist_total_year()
+        self.release_hist_sale_year()
+        self.release_hist_total_month()
+        self.release_hist_sale_month()
+        self.release_multiple_hist()
 
         
 class Summary_time:
@@ -301,8 +314,8 @@ class Summary_time:
         return print(), plt.show()
          
     def runAll(self):
-        xx.release_tab_year()
-        xx.release_tab_month()
+        self.release_tab_year()
+        self.release_tab_month()
     
 class Summary_ratings:
     
@@ -381,7 +394,10 @@ class Summary_ratings:
         return print(),plt.show()
     
     def runAll(self):
-        xx.summary_table()
-        xx.sale_ratio_hist()
-        xx.average_discount_hist()
+        self.summary_table()
+        self.sale_ratio_hist()
+        self.average_discount_hist()
         
+
+
+
