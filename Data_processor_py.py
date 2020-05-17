@@ -14,7 +14,6 @@ from datetime import datetime
 
 # In[4]:
 
-
 class Summary:
     
     def __init__(self, data):
@@ -48,13 +47,11 @@ class Summary:
         new_price = np.array([x for x in self.data.iloc[:,5].dropna()]).astype(float)
         discount = np.array([x for x in self.data.iloc[:,6].dropna()]).astype(float)
         old_price = self.data[['Normal price (€)','Sale rate (in %)']].dropna().iloc[:,0] #original prices of items on sale
-        #all_prices = np.array([x[:-1].replace(',', '.').replace("-","0") for x in self.data.iloc[:,4].dropna()]).astype(float)
         
-        #all_price_hist = pd.Series(all_prices).plot(kind="hist",bins=20, alpha=0.8, figsize=(10,5),color="blue", edgecolor = "red",linewidth=3, label="All prices")
         old_price_hist = pd.Series(old_price).plot(kind="hist",
                                                    bins=400, 
                                                    alpha=0.8, 
-                                                   figsize=(10,5),
+                                                   figsize=(15,5),
                                                    color="green", 
                                                    edgecolor = "blue",
                                
@@ -63,16 +60,16 @@ class Summary:
         new_price_hist = pd.Series(new_price).plot(kind="hist",
                                                    bins=400, 
                                                    alpha=0.8, 
-                                                   figsize=(10,5),
+                                                   figsize=(15,5),
                                                    color="orange", 
-                                                   edgecolor = "green",
+                                                   edgecolor = "red",
                                                    linewidth=3, 
                                                    label = "Discounted Prices")
         
         plt.legend()
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Price (€)', size='x-large')
-        plt.gca().set_xlim([0,60])
+        plt.gca().set_xlim([0,100])
         return print(), plt.show() 
     
     def release_hist_total_year(self):
@@ -82,7 +79,7 @@ class Summary:
                          width= 1,
                          color="blue", 
                          alpha=0.8, 
-                         figsize=(10,5), 
+                         figsize=(15,5), 
                          edgecolor = "red",
                          linewidth=3, 
                          label = "Release date of all games")
@@ -99,7 +96,7 @@ class Summary:
                           width= 1,
                           color="blue", 
                           alpha=0.8, 
-                          figsize=(10,5),
+                          figsize=(15,5),
                           edgecolor = "red",
                           linewidth=3, 
                           label = "Release date of items on sale")
@@ -112,12 +109,11 @@ class Summary:
     
     def release_hist_total_month(self):
         release_all = self.release.groupby(self.release.dt.month).count()
-        release_all.plot(kind="bar",
-                         
+        release_all.plot(kind="bar", 
                          width= 1,
                          color="red",
                          alpha=0.8, 
-                         figsize=(10,5),
+                         figsize=(15,5),
                          edgecolor = "blue",
                          linewidth=3, 
                          label = "Release date of all games")
@@ -134,7 +130,7 @@ class Summary:
                           width= 1,
                           color="red", 
                           alpha=0.8, 
-                          figsize=(10,5), 
+                          figsize=(15,5), 
                           edgecolor = "blue",
                           linewidth=3, 
                           label = "Release date of items on sale")
@@ -164,7 +160,7 @@ class Summary:
                                                               width= 1,
                                                               color = colors,
                                                               alpha=0.8, 
-                                                              figsize=(10,5),
+                                                              figsize=(15,5),
                                                               edgecolor = "black",
                                                               linewidth=1,
                                                              )
@@ -188,7 +184,7 @@ class Summary:
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (by months and years)', size='x-large')
         plt.title('Number of games released (by months and years)')
-        return plt.show()
+        return print(), plt.show()
     
     def runAll(self):
         self.basic_summary()
@@ -245,7 +241,21 @@ class Summary_time:
         the_table.auto_set_font_size(False)
         the_table.set_fontsize(20)
         return print(), plt.show()
-           
+    
+    
+    def average_rating_year(self):
+        
+        rl = self.release
+        rl = rl[rl >= '2005-01-01']
+        average_rating = round(self.data.groupby(rl.dt.year)['Share of positive reviews (in %)'].mean(),2)
+        average_rating.plot(kind="line", figsize=(15,5), color = "red", alpha=0.3, linewidth = 4)
+        
+        plt.title('Game rating throughout the years')
+        plt.ylabel('Rating', size='x-large')
+        plt.xlabel('Release date (Year)', size='x-large')
+        return print(), plt.show()
+     
+        
     def release_tab_month(self):
         release_all = self.release.groupby(self.release.dt.month).count()
         release_sale = self.data.groupby(self.release.dt.month)['Discounted price if there is a sale (€)'].count()
@@ -303,7 +313,11 @@ class Summary_time:
          
     def runAll(self):
         self.release_tab_year()
+        self.average_rating_year()
         self.release_tab_month()
+        
+    
+    
     
 class Summary_ratings:
     
@@ -361,6 +375,7 @@ class Summary_ratings:
                                                                                    edgecolor = "blue",
                                                                                    linewidth=3, 
                                                                                    label = "Prices before discount")
+        plt.title('Ratio of games on sale for different Steam ratings')
         plt.ylabel('Ratio of games on sale', size='x-large')
         plt.xlabel('Rating', size='x-large')
         plt.gca().invert_xaxis()
@@ -375,6 +390,7 @@ class Summary_ratings:
                                                                                    edgecolor = "blue",
                                                                                    linewidth=3, 
                                                                                    label = "Prices before discount")
+        plt.title('Average discount rates for different Steam ratings')
         plt.ylabel('Average discount rate (%)', size='x-large')
         plt.xlabel('Rating', size='x-large')
         plt.gca().invert_xaxis()
