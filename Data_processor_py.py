@@ -15,23 +15,6 @@ from datetime import datetime
 # In[4]:
 
 
-#!/usr/bin/env python
-# coding: utf-8
-
-# Data processor:
-
-# In[3]:
-
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from datetime import datetime
-
-
-# In[4]:
-
-
 class Summary:
     
     def __init__(self, data):
@@ -88,7 +71,7 @@ class Summary:
         
         plt.legend()
         plt.ylabel('Frequency', size='x-large')
-        plt.xlabel('$$$', size='x-large')
+        plt.xlabel('Price (€)', size='x-large')
         plt.gca().set_xlim([0,60])
         return print(), plt.show() 
     
@@ -142,7 +125,7 @@ class Summary:
         plt.legend()
         plt.title("Number of games released by Month")
         plt.ylabel('Frequency', size='x-large')
-        plt.xlabel('Release date (Year)', size='x-large')
+        plt.xlabel('Release date (Month)', size='x-large')
         return print(), plt.show()
     
     def release_hist_sale_month(self):
@@ -159,12 +142,12 @@ class Summary:
         plt.legend()
         plt.title("Number of games on sale released by Month")
         plt.ylabel('Frequency', size='x-large')
-        plt.xlabel('Release date (Year)', size='x-large')
+        plt.xlabel('Release date (Month)', size='x-large')
         return print(), plt.show()
-
+    
     
     def release_multiple_hist(self):
-        rl = self.data.iloc[:,1].dropna().astype("datetime64")
+        rl = self.release
         rl = rl[rl >= '2010-01-01']
         rl = rl[rl <= '2020-01-01']
         colors = np.array(["lightgrey", 
@@ -184,22 +167,27 @@ class Summary:
                                                               figsize=(10,5),
                                                               edgecolor = "black",
                                                               linewidth=1,
-                                                              label = "Release date of items on sale"
-                                                             ).axes.xaxis.set_visible(False)
+                                                             )
         
-        plt.legend(['2010',
-                    '2011',
-                    '2012',
-                    '2013',
-                    '2014',
-                    '2015',
-                    '2016',
-                    '2017',
-                    '2018',
-                    '2019'])
+        ax = plt.gca()
+        pos = [5,15,25,35,45,55,65,75,85,95,105,115]
+        l = ['January', 
+            'February', 
+            'March', 
+            'April', 
+            'May', 
+            'June', 
+            'July', 
+            'August', 
+            'September', 
+            'October', 
+            'November',
+            'December']
+        ax.set(xticks=pos, xticklabels=l)
+        
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (by months and years)', size='x-large')
-        #rl.axes.xaxis.set_visible(False)
+        plt.title('Number of games released (by months and years)')
         return plt.show()
     
     def runAll(self):
