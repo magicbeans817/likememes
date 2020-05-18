@@ -4,5 +4,4 @@ This github repository contains the files for the final project of the IES pytho
 
 We scrape the Steam website for video game data and analyze it.
 
-Authors: Jan Suchánek
-         Kristian Racocha
+Authors: Jan Suchánek, Kristian Racocha
