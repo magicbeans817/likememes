@@ -18,6 +18,7 @@ class Summary:
     
     def __init__(self, data):
         self.data = data
+        #define self.release in init because it is used multiple times in the class (also in the following classes)
         self.release = self.data.iloc[:,1].dropna()
 
         
@@ -27,6 +28,7 @@ class Summary:
         
         
     def basic_summary(self):
+        #function generating basic summary of discounts, prices and reviews
         number = self.data.iloc[:,6].count()
         sales = [int(x) for x in self.data.iloc[:,6].dropna()]
         new_price = np.array([x for x in self.data.iloc[:,5].dropna()]).astype(float)
@@ -35,26 +37,26 @@ class Summary:
         
         mean_of_review = round(self.data.iloc[:,3].dropna().mean(),1)
         
-        return {print('Basic summary: '),
-                print(f'The number of items on sale from the first {self.get_pages()} pages is {number}.') ,
-                print(f'The mean discount is {round(np.mean(sales),2)}%.'),
-                print(f'The average price before sale is {round(np.mean(old_price),2)}€, with the average price after sale being {round(np.mean(new_price),2)}€.'),
-                print(f'The average number of reviews on a game from the first {self.get_pages()} pages is {mean_of_review}.')
-               }
-
+        print('Basic summary: '),
+        print(f'The number of items on sale from the first {self.get_pages()} pages is {number}.') ,
+        print(f'The mean discount is {round(np.mean(sales),2)}%.'),
+        print(f'The average price before sale is {round(np.mean(old_price),2)}€, with the average price after sale being {round(np.mean(new_price),2)}€.'),
+        print(f'The average number of reviews on a game from the first {self.get_pages()} pages is {mean_of_review}.')
+            
+        return
 
     def price_hist(self):
+        #find discounted prices and the prices before discount
         new_price = np.array([x for x in self.data.iloc[:,5].dropna()]).astype(float)
         discount = np.array([x for x in self.data.iloc[:,6].dropna()]).astype(float)
         old_price = self.data[['Normal price (€)','Sale rate (in %)']].dropna().iloc[:,0] #original prices of items on sale
-        
+        #histograms for both the old and new prices
         old_price_hist = pd.Series(old_price).plot(kind="hist",
                                                    bins=400, 
                                                    alpha=0.8, 
                                                    figsize=(15,5),
                                                    color="green", 
                                                    edgecolor = "blue",
-                               
                                                    linewidth=3, 
                                                    label = "Prices before discount")
         new_price_hist = pd.Series(new_price).plot(kind="hist",
@@ -70,9 +72,10 @@ class Summary:
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Price (€)', size='x-large')
         plt.gca().set_xlim([0,100])
-        return print(), plt.show() 
+        plt.show()
     
     def release_hist_total_year(self):
+        #group data by year and count the number of games released by year
         release_all = self.release.groupby(self.release.dt.year).count()
         release_all.append
         release_all.plot(kind="bar", 
@@ -88,9 +91,10 @@ class Summary:
         plt.title("Number of games released by Year")
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (Year)', size='x-large')
-        return print(), plt.show()
+        plt.show()
     
     def release_hist_sale_year(self):
+        #group data by year and count the number of discounted games released by year
         release_sale = self.data.groupby(self.release.dt.year)['Discounted price if there is a sale (€)'].count()
         release_sale.plot(kind="bar", 
                           width= 1,
@@ -105,9 +109,10 @@ class Summary:
         plt.title("Number of games on sale released by Year")
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (Year)', size='x-large')
-        return print(), plt.show()
+        plt.show()
     
     def release_hist_total_month(self):
+        #group data by month and count the number of games released by month
         release_all = self.release.groupby(self.release.dt.month).count()
         release_all.plot(kind="bar", 
                          width= 1,
@@ -122,9 +127,10 @@ class Summary:
         plt.title("Number of games released by Month")
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (Month)', size='x-large')
-        return print(), plt.show()
+        plt.show()
     
     def release_hist_sale_month(self):
+        #group data by month and count the number of discounted games released by month
         release_sale = self.data.groupby(self.release.dt.month)['Discounted price if there is a sale (€)'].count()
         release_sale.plot(kind="bar", 
                           width= 1,
@@ -139,13 +145,15 @@ class Summary:
         plt.title("Number of games on sale released by Month")
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (Month)', size='x-large')
-        return print(), plt.show()
+        plt.show()
     
     
     def release_multiple_hist(self):
+        #get release dates and select the relevant ones 
         rl = self.release
         rl = rl[rl >= '2010-01-01']
         rl = rl[rl <= '2020-01-01']
+        #choosing colors of bars
         colors = np.array(["lightgrey", 
                            "skyblue", 
                            "dodgerblue", 
@@ -156,6 +164,7 @@ class Summary:
                            "limegreen", 
                            "indigo", 
                            "chocolate"])
+        #group the data by month and year and plotting the number of games for years and months
         rl.groupby(by=[rl.dt.month,rl.dt.year]).count().plot(kind="bar",
                                                               width= 1,
                                                               color = colors,
@@ -165,6 +174,7 @@ class Summary:
                                                               linewidth=1,
                                                              )
         
+        #changing the x axis labels to months (otherwise the labels are unreadable)
         ax = plt.gca()
         pos = [5,15,25,35,45,55,65,75,85,95,105,115]
         l = ['January', 
@@ -184,9 +194,10 @@ class Summary:
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (by months and years)', size='x-large')
         plt.title('Number of games released (by months and years)')
-        return print(), plt.show()
+        plt.show()
     
     def runAll(self):
+        #a function to run all methods of the class
         self.basic_summary()
         self.price_hist()
         self.release_hist_total_year()
@@ -203,12 +214,14 @@ class Summary_time:
         self.release = self.data.iloc[:,1].dropna()
         
     def release_tab_year(self):
+        #grouping data by year of release
         release_all = self.release.groupby(self.release.dt.year).count()
+        #finding different values for the grouped data
         release_sale = self.data.groupby(self.release.dt.year)['Discounted price if there is a sale (€)'].count()
         average_discount = round(self.data.groupby(self.release.dt.year)['Sale rate (in %)'].mean(),2)
         average_rating = round(self.data.groupby(self.release.dt.year)['Share of positive reviews (in %)'].mean(),2)
         sale_ratio = round(release_sale/release_all,4)
-        
+        #concating and thus creating a pandas DataFrame from the values for better manipulation with data
         release_table_year = pd.concat([release_all,
                                         release_sale,
                                         average_discount, 
@@ -223,7 +236,7 @@ class Summary_time:
                                                          axis=1 ,inplace=False
                                                         )
         
-        
+        #creating a table for data vizualization
         fig = plt.figure(figsize = (15, 6))
         ax = fig.add_subplot(111)
 
@@ -240,12 +253,13 @@ class Summary_time:
         ax.axis("off")
         the_table.auto_set_font_size(False)
         the_table.set_fontsize(20)
-        return print(), plt.show()
+        plt.show()
     
     
     def average_rating_year(self):
-        
+        #creating a plot out of the average ratings throughout the years
         rl = self.release
+        #only taking a portion of the data due to low number of games from previous years
         rl = rl[rl >= '2005-01-01']
         average_rating = round(self.data.groupby(rl.dt.year)['Share of positive reviews (in %)'].mean(),2)
         average_rating.plot(kind="line", figsize=(15,5), color = "red", alpha=0.3, linewidth = 4)
@@ -253,16 +267,18 @@ class Summary_time:
         plt.title('Game rating throughout the years')
         plt.ylabel('Rating', size='x-large')
         plt.xlabel('Release date (Year)', size='x-large')
-        return print(), plt.show()
+        plt.show()
      
         
     def release_tab_month(self):
+        #creating a table to summarize the data based on months (grouping by month of release)
         release_all = self.release.groupby(self.release.dt.month).count()
+        #getting wanted values
         release_sale = self.data.groupby(self.release.dt.month)['Discounted price if there is a sale (€)'].count()
         average_discount = round(self.data.groupby(self.release.dt.month)['Sale rate (in %)'].mean(),2)
         average_rating = round(self.data.groupby(self.release.dt.month)['Share of positive reviews (in %)'].mean(),2)
         sale_ratio = round(release_sale/release_all,4)
-        
+        #concate to pandas DataFrame
         release_table_month = pd.concat([release_all,
                                          release_sale,
                                          average_discount, 
@@ -270,6 +286,7 @@ class Summary_time:
                                          average_rating],
                                         axis=1
                                        )
+        #creating a table for vizualization 
         release_table_month = release_table_month.set_axis(['Games', 
                                                             'Discounted games', 
                                                             'Average discount (%)', 
@@ -308,10 +325,11 @@ class Summary_time:
         ax.axis("off")
         the_table.auto_set_font_size(False)
         the_table.set_fontsize(20)
-        
-        return print(), plt.show()
+        plt.show()
+
          
     def runAll(self):
+        #a function to run all methods of the class
         self.release_tab_year()
         self.average_rating_year()
         self.release_tab_month()
@@ -326,11 +344,13 @@ class Summary_ratings:
         
     
     def ratings(self):
-        
+        #group data by ratings and getting numbers of total games and games on sale
         counted = self.data.groupby('Share of positive reviews (in %)')['Total number of reviews',
                                                                         'Discounted price if there is a sale (€)'
                                                                        ].count()
+        #generating ratio of games on sale for each rating
         sale_ratio = (counted.iloc[:,1])/counted.iloc[:,0]
+        #group by rating and getting averages of prices, discounts and total reviews
         means = self.data.groupby('Share of positive reviews (in %)')['Total number of reviews',
                                                                       'Normal price (€)',
                                                                       'Discounted price if there is a sale (€)',
@@ -350,6 +370,7 @@ class Summary_ratings:
         return rating_table
     
     def summary_table(self):
+        #creating a table from the data obtained in previous function (self.ratings())
         fig = plt.figure(figsize = (20, 22))
         ax = fig.add_subplot(111)
         
@@ -364,10 +385,11 @@ class Summary_ratings:
                     )
 
         ax.axis("off")
-        
-        return plt.show()
+        plt.show()
+
     
     def sale_ratio_hist(self):
+        #plotting bar chart of ratio of games in sale while groupped by rating
         sale_ratio_hist = pd.Series(self.ratings()['Ratio of games on sale']).plot(kind="bar",
                                                                                    alpha=0.8, 
                                                                                    figsize=(20,5),
@@ -379,10 +401,11 @@ class Summary_ratings:
         plt.ylabel('Ratio of games on sale', size='x-large')
         plt.xlabel('Rating', size='x-large')
         plt.gca().invert_xaxis()
-        
-        return print(),plt.show()
+        plt.show()
+
     
     def average_discount_hist(self):
+        #plotting bar chart of average discount while groupped by rating
         sale_ratio_hist = pd.Series(self.ratings()['Avg. discount rate (%)']).plot(kind="bar",
                                                                                    alpha=0.8, 
                                                                                    figsize=(20,5),
@@ -394,10 +417,10 @@ class Summary_ratings:
         plt.ylabel('Average discount rate (%)', size='x-large')
         plt.xlabel('Rating', size='x-large')
         plt.gca().invert_xaxis()
-        
-        return print(),plt.show()
+        plt.show()
     
     def n_of_games(self):
+        #plotting bar chart of the total number of games while groupped by rating
         sale_ratio_hist = pd.Series(self.ratings()['Games']).plot(kind="bar",
                                                                                    alpha=0.8, 
                                                                                    figsize=(20,5),
@@ -409,10 +432,11 @@ class Summary_ratings:
         plt.ylabel('Number of games', size='x-large')
         plt.xlabel('Rating', size='x-large')
         plt.gca().invert_xaxis()
-        
-        return print(),plt.show()
+        plt.show()
+
     
     def runAll(self):
+        #a function to run all methods of the class
         self.summary_table()
         self.n_of_games()
         self.sale_ratio_hist()
