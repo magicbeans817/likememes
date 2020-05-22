@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+import matplotlib.patches as mpatches
 
 
 # In[4]:
@@ -152,7 +153,7 @@ class Summary:
         #get release dates and select the relevant ones 
         rl = self.release
         rl = rl[rl >= '2010-01-01']
-        rl = rl[rl <= '2020-01-01']
+        rl = rl[rl <= '2019-12-31']
         #choosing colors of bars
         colors = np.array(["lightgrey", 
                            "skyblue", 
@@ -165,15 +166,17 @@ class Summary:
                            "indigo", 
                            "chocolate"])
         #group the data by month and year and plotting the number of games for years and months
-        rl.groupby(by=[rl.dt.month,rl.dt.year]).count().plot(kind="bar",
-                                                              width= 1,
-                                                              color = colors,
-                                                              alpha=0.8, 
-                                                              figsize=(15,5),
-                                                              edgecolor = "black",
-                                                              linewidth=1,
-                                                             )
+        my_plot = rl.groupby(by=[rl.dt.month,rl.dt.year]).count()
         
+        my_plot.plot(kind="bar",
+                  width= 1,
+                  color = colors,
+                  alpha=0.8, 
+                  figsize=(15,5),
+                  edgecolor = "black",
+                  linewidth=1,
+                 )
+
         #changing the x axis labels to months (otherwise the labels are unreadable)
         ax = plt.gca()
         pos = [5,15,25,35,45,55,65,75,85,95,105,115]
@@ -191,10 +194,22 @@ class Summary:
             'December']
         ax.set(xticks=pos, xticklabels=l)
         
+        #creating legend of the plot
+        years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]
+        #dictionary for legend values
+        dictionary = dict(zip(years, colors))
+        patchList = []
+        #making handles for each color so plt.legend can recognize the input
+        for key in dictionary:
+            data_key = mpatches.Patch(color=dictionary[key], label=key)
+            patchList.append(data_key)
+
+        plt.legend(handles=patchList,bbox_to_anchor=(1.03, 1))
         plt.ylabel('Frequency', size='x-large')
         plt.xlabel('Release date (by months and years)', size='x-large')
         plt.title('Number of games released (by months and years)')
         plt.show()
+    
     
     def runAll(self):
         #a function to run all methods of the class
@@ -356,7 +371,7 @@ class Summary_ratings:
                                                                       'Discounted price if there is a sale (€)',
                                                                       'Sale rate (in %)'
                                                                      ].mean()
-        
+         
         rating_table = pd.concat([counted,round(sale_ratio,4),round(means,2)], axis=1).sort_index(ascending=False)
         rating_table = rating_table.set_axis(['Games',
                                               'Discounted games',
